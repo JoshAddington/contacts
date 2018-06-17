@@ -13,10 +13,24 @@ class App extends Component {
             url: 'http://react-app.adwerx.com:3000',
             email: '',
             password: '',
+            id: '',
+            secret: '',
+            isLoading: false,
+            contacts: [],
+      }
+    }
 
     registerUser = (form) => {
         let options = fetchApi({method: 'POST', payload: $(form).serialize()});
         fetch(`${this.state.url}/register`, options)
+            .then((response) => response.json())
+            .then((json) => this.setState({...json}))
+            .then(() => this.authUser(form))
+    }
+
+    authUser = (form) => {
+        let options = fetchApi({method: 'POST', payload: $(form).serialize()});
+        fetch(`${this.state.url}/auth`, options)
             .then((response) => response.json())
             .then((json) => this.setState({...json}))
     }
