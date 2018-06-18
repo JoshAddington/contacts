@@ -19,7 +19,16 @@ class App extends Component {
             secret: '',
             isLoading: false,
             contacts: [],
+            error: {},
       }
+    }
+
+    handleFetchError(response) {
+        if (!response.ok) {
+            console.log('response', response);
+            throw Error(response.statusText)
+        }
+        return response;
     }
 
     registerUser = (form) => {
@@ -28,14 +37,27 @@ class App extends Component {
             .then((response) => response.json())
             .then((json) => this.setState({...json}))
             .then(() => this.authUser(form))
+            .then(this.handleFetchError)
+            .then(() => this.authUser(options))
+            .catch((ex) => {
+                this.setState({ error: ex });
+                console.error('ex', ex)
+                this.registerUser(form);
+            });
     }
 
     authUser = (form) => {
         let options = fetchApi({method: 'POST', payload: $(form).serialize()});
         fetch(`${this.state.url}/auth`, options)
+            .then(this.handleFetchError)
             .then((response) => response.json())
             .then((json) => this.setState({...json}))
             .then(() => this.loadContacts())
+            .catch((ex) => {
+                this.setState({ error: ex });
+                console.error('ex', ex)
+                this.authUser(options);
+            });
     }
 
     loadContacts = () => {
@@ -43,8 +65,14 @@ class App extends Component {
         let { id, secret } = this.state,
             options = fetchAuthApi({method: 'GET', id, secret});
         fetch(`${this.state.url}/api/contacts`, options)
+            .then(this.handleFetchError)
             .then((response) => response.json())
             .then((json) => this.setState({ contacts: json, isLoading: false }))
+            .catch((ex) => {
+                this.setState({ error: ex });
+                console.error('ex', ex)
+                this.loadContacts();
+            });
     }
 
     renderApp = () => {
@@ -68,7 +96,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Contacts</h1>
         </header>
-        { this.state.isLoading ? <Loading /> : this.renderApp() }
+        { this.state.isLoading ? <Loading error={this.state.error} /> : this.renderApp() }
       </div>
     );
   }
