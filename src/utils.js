@@ -14,8 +14,8 @@ const fetchAuthApi = ({ method, id='', secret='', payload={}}) => {
             'content-type': 'application/x-www-form-urlencoded',
             'Authorization': 'Basic ' + btoa(id + ':' + secret),
         }),
-
+        body: payload,
     }
 }
-export { fetchApi };
+
 export { fetchApi, fetchAuthApi };

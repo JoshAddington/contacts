@@ -13,8 +13,6 @@ class App extends Component {
         super(props);
         this.state = {
             url: 'http://react-app.adwerx.com:3000',
-            email: '',
-            password: '',
             id: '',
             secret: '',
             isLoading: false,
@@ -32,11 +30,9 @@ class App extends Component {
     }
 
     registerUser = (form) => {
+        this.setState({isLoading: true});
         let options = fetchApi({method: 'POST', payload: $(form).serialize()});
         fetch(`${this.state.url}/register`, options)
-            .then((response) => response.json())
-            .then((json) => this.setState({...json}))
-            .then(() => this.authUser(form))
             .then(this.handleFetchError)
             .then(() => this.authUser(options))
             .catch((ex) => {
@@ -46,8 +42,7 @@ class App extends Component {
             });
     }
 
-    authUser = (form) => {
-        let options = fetchApi({method: 'POST', payload: $(form).serialize()});
+    authUser = (options) => {
         fetch(`${this.state.url}/auth`, options)
             .then(this.handleFetchError)
             .then((response) => response.json())
@@ -61,7 +56,6 @@ class App extends Component {
     }
 
     loadContacts = () => {
-        this.setState({isLoading: true});
         let { id, secret } = this.state,
             options = fetchAuthApi({method: 'GET', id, secret});
         fetch(`${this.state.url}/api/contacts`, options)
@@ -79,7 +73,7 @@ class App extends Component {
         return (
             <Grid>
                 <Row>
-                    <Col sm={8} smOffset={2}>
+                    <Col sm={10} smOffset={1}>
                         {this.state.contacts.length === 0 ?
                             <RegisterForm handleSubmit={this.registerUser} /> :
                             <ContactList contacts={this.state.contacts} />
