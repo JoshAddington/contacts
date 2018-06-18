@@ -1,0 +1,8 @@
+.contactList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.contactList div {
+    flex: 50%
+}

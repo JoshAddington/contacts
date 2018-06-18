@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
 
+import ContactList from './components/ContactList';
+import Loading from './components/Loading';
 import RegisterForm from './components/RegisterForm';
-import { fetchApi } from './utils';
+import { fetchApi, fetchAuthApi } from './utils';
 import './App.css';
 
 class App extends Component {
@@ -33,6 +35,31 @@ class App extends Component {
         fetch(`${this.state.url}/auth`, options)
             .then((response) => response.json())
             .then((json) => this.setState({...json}))
+            .then(() => this.loadContacts())
+    }
+
+    loadContacts = () => {
+        this.setState({isLoading: true});
+        let { id, secret } = this.state,
+            options = fetchAuthApi({method: 'GET', id, secret});
+        fetch(`${this.state.url}/api/contacts`, options)
+            .then((response) => response.json())
+            .then((json) => this.setState({ contacts: json, isLoading: false }))
+    }
+
+    renderApp = () => {
+        return (
+            <Grid>
+                <Row>
+                    <Col sm={8} smOffset={2}>
+                        {this.state.contacts.length === 0 ?
+                            <RegisterForm handleSubmit={this.registerUser} /> :
+                            <ContactList contacts={this.state.contacts} />
+                        }
+                    </Col>
+                </Row>
+            </Grid>
+        )
     }
 
   render() {
@@ -41,13 +68,7 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Contacts</h1>
         </header>
-        <Grid>
-            <Row>
-                <Col sm={8} smOffset={2}>
-                    <RegisterForm handleSubmit={this.registerUser} />
-                </Col>
-            </Row>
-        </Grid>
+        { this.state.isLoading ? <Loading /> : this.renderApp() }
       </div>
     );
   }

@@ -1,0 +1,18 @@
+.contact {
+    padding: 5px;
+}
+
+.contactImg {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.contactInfo {
+    padding-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.contactInfo div {
+    padding: 1px;
+}
