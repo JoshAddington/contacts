@@ -18,6 +18,7 @@ class RegisterForm extends Component {
         });
     }
 
+    // validateEmail and validatePassword return 'success' or 'error' for builtin react-bootstrap FormGroup validationState input validation.
     validInput = () => {
         return (this.validateEmail() === 'success' && this.validatePassword() === 'success');
     }

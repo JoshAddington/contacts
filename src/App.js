@@ -29,6 +29,7 @@ class App extends Component {
         return response;
     }
 
+    // chain of API requests fired from RegisterForm submission
     registerUser = (form) => {
         this.setState({isLoading: true});
         let options = fetchApi({method: 'POST', payload: $(form).serialize()});
@@ -69,6 +70,7 @@ class App extends Component {
             });
     }
 
+    // renders registration form or contact list, based on whether contacts have been successfully loaded into state.
     renderApp = () => {
         return (
             <Grid>
